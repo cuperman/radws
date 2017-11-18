@@ -1,3 +1,4 @@
+const action = require('../../lib/controller/action');
 const Photo = require('../models/photo');
 
 const {
@@ -9,109 +10,59 @@ const {
   HTTP_UNPROCESSABLE_ENTITY
 } = require('../../lib/http/status_codes');
 
-const jsonResponse = require('../../lib/formatters/json_response');
-
-const processRequest = (event) => {
-  // TODO: validate CSRF
-  return new Promise((resolve, reject) => {
-    let req = {};
-
-    req.params = event.pathParameters || {};
-    req.body = event.body ? JSON.parse(event.body) : '';
-
-    resolve(req);
-  });
-};
-
 // GET /photos
-exports.index = (event, context, callback) => {
-  processRequest(event)
-    .then(req => {
-      return new Promise((resolve, reject) => {
-        Photo.all()
-          .then(data => resolve(Object.assign({}, req, { photos: data.Items })))
-          .catch(error => reject({ status: HTTP_INTERNAL_SERVER_ERROR }));
-      });
-    })
-    .then(req => {
-      callback(null, jsonResponse(HTTP_OK, req.photos));
+exports.index = action.lambdaHandler((request, render) => {
+  Photo.all()
+    .then(data => {
+      render({ status: HTTP_OK, body: data.Items });
     })
     .catch(error => {
-      callback(null, jsonResponse(error.status));
+      render({ status: HTTP_INTERNAL_SERVER_ERROR });
     });
-}
+});
 
 // GET /photos/:id
-exports.show = (event, context, callback) => {
-  processRequest(event)
-    .then(req => {
-      return new Promise((resolve, reject) => {
-        Photo.find(req.params.id)
-          .then(data => resolve(Object.assign({}, req, { photo: data.Item })))
-          .catch(error => reject({ status: HTTP_NOT_FOUND }))
-      });
-    })
-    .then(req => {
-      callback(null, jsonResponse(HTTP_OK, req.photo));
+exports.show = action.lambdaHandler((request, render) => {
+  Photo.find(request.params.id)
+    .then(data => {
+      render({ status: HTTP_OK, body: { photo: data.Item } });
     })
     .catch(error => {
-      callback(null, jsonResponse(error.status));
+      render({ status: HTTP_NOT_FOUND });
     });
-}
+});
 
 // POST /photos
-exports.create = (event, context, callback) => {
-  processRequest(event)
-    .then(req => {
-      return new Promise((resolve, reject) => {
-        Photo.create(req.body.photo)
-          .then(data => resolve(Object.assign({}, req, { photo: data.Item })))
-          .catch(error => reject({ status: HTTP_UNPROCESSABLE_ENTITY, message: 'Validation error' }));
-      });
-    })
-    .then(req => {
-      callback(null, jsonResponse(HTTP_CREATED, req.photo));
+exports.create = action.lambdaHandler((request, render) => {
+  Photo.create(request.body.photo)
+    .then(data => {
+      render({ status: HTTP_CREATED, body: { photo: data.Item } });
     })
     .catch(error => {
-      callback(null, jsonResponse(error.status, { message: error.message }));
+      render({ status: HTTP_UNPROCESSABLE_ENTITY, body: { error: 'Validation error' } });
     });
-}
+});
 
 // PATCH/PUT /photos/:id
-exports.update = (event, context, callback) => {
-  processRequest(event)
-    .then(req => {
-      return new Promise((resolve, reject) => {
-        Photo.update(req.params.id, req.body.photo)
-          .then(data => resolve(Object.assign({}, req, { photo: data.Item })))
-          .catch(error => {
-            reject({ status: HTTP_NOT_FOUND });
-            reject({ status: HTTP_UNPROCESSABLE_ENTITY, message: 'Validation error' });
-          });
-      })
-    })
-    .then(req => {
-      callback(null, jsonResponse(HTTP_OK, req.photo));
+exports.update = action.lambdaHandler((request, render) => {
+  Photo.update(request.params.id, request.body.photo)
+    .then(data => {
+      render({ status: HTTP_OK, body: { photo: data.Item } });
     })
     .catch(error => {
-      callback(null, jsonResponse(error.status, { message: error.message }));
+      // TODO: handle the case where item is not found
+      // render({ status: HTTP_NOT_FOUND });
+      render({ status: HTTP_UNPROCESSABLE_ENTITY, body: { error: 'Validation error' } });
     });
-}
+});
 
 // DELETE /photos/:id
-exports.destroy = (event, context, callback) => {
-  processRequest(event)
-    .then(req => {
-      return new Promise((resolve, reject) => {
-        Photo.destroy(req.params.id)
-          .then(data => resolve())
-          .catch(error => reject({ status: HTTP_NOT_FOUND }))
-      });
-    })
-    .then(req => {
-      callback(null, jsonResponse(HTTP_NO_CONTENT));
+exports.destroy = action.lambdaHandler((request, render) => {
+  Photo.destroy(request.params.id)
+    .then(data => {
+      render({ status: HTTP_NO_CONTENT });
     })
     .catch(error => {
-      callback(null, jsonResponse(error.status));
+      render({ status: HTTP_NOT_FOUND });
     });
-}
+});
