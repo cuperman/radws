@@ -7,7 +7,7 @@ const formatRequest = (event) => {
   request.body = event.body ? JSON.parse(event.body) : '';
 
   return request;
-}
+};
 
 exports.lambdaHandler = (actionCallback) => {
   return (event, context, lambdaCallback) => {
@@ -17,11 +17,11 @@ exports.lambdaHandler = (actionCallback) => {
 
     const render = data => lambdaCallback(null, jsonResponse(data.status, data.body, data.headers));
 
-    new Promise((resolve, reject) => {
+    new Promise(() => {
       actionCallback(request, render);
     })
-    .catch(error => {
-      lambdaCallback(null, jsonResponse(error.status, { error: error.message }));
-    });
+      .catch(error => {
+        lambdaCallback(null, jsonResponse(error.status, { error: error.message }));
+      });
   };
 };

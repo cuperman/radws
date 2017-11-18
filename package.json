@@ -4,6 +4,7 @@
   "description": "## Rails Reference",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/cuperman/crud-aws#readme",
   "devDependencies": {
+    "eslint": "^4.11.0",
     "nodemon": "^1.12.1"
   },
   "dependencies": {

@@ -1,8 +1,10 @@
 function renderSummary(request, status, body) {
   function responseBody(body) {
     if (body) {
-      return '<h4>Response Body</h4>' +
-      '<pre>' + JSON.stringify(body, null, 2) + '</pre>'
+      return (
+        '<h4>Response Body</h4>' +
+        '<pre>' + JSON.stringify(body, null, 2) + '</pre>'
+      );
     } else {
       return '';
     }
@@ -31,10 +33,10 @@ $(document).ready(function() {
   var $summary = $('#summary');
 
   var editor = ace.edit('editor');
-  editor.setTheme("ace/theme/textmate");
+  editor.setTheme('ace/theme/textmate');
   editor.setShowPrintMargin(false);
-  editor.getSession().setMode("ace/mode/json");
-  editor.getSession().on('change', function(e) {
+  editor.getSession().setMode('ace/mode/json');
+  editor.getSession().on('change', function() {
     $body.val(editor.getValue());
   });
 
@@ -50,12 +52,12 @@ $(document).ready(function() {
       dataType: 'json',
       contentType: 'application/json'
     })
-    .done(function(data, textStatus, jqXHR) {
-      $summary.html(renderSummary(url, textStatus, data));
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      $summary.html(renderError(url, errorThrown));
-    });
+      .done(function(data, textStatus) {
+        $summary.html(renderSummary(url, textStatus, data));
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        $summary.html(renderError(url, errorThrown));
+      });
 
     return false;
   });

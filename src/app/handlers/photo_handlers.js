@@ -16,7 +16,7 @@ exports.index = action.lambdaHandler((request, render) => {
     .then(data => {
       render({ status: HTTP_OK, body: data.Items });
     })
-    .catch(error => {
+    .catch(() => {
       render({ status: HTTP_INTERNAL_SERVER_ERROR });
     });
 });
@@ -27,7 +27,7 @@ exports.show = action.lambdaHandler((request, render) => {
     .then(data => {
       render({ status: HTTP_OK, body: { photo: data.Item } });
     })
-    .catch(error => {
+    .catch(() => {
       render({ status: HTTP_NOT_FOUND });
     });
 });
@@ -38,7 +38,7 @@ exports.create = action.lambdaHandler((request, render) => {
     .then(data => {
       render({ status: HTTP_CREATED, body: { photo: data.Item } });
     })
-    .catch(error => {
+    .catch(() => {
       render({ status: HTTP_UNPROCESSABLE_ENTITY, body: { error: 'Validation error' } });
     });
 });
@@ -49,7 +49,7 @@ exports.update = action.lambdaHandler((request, render) => {
     .then(data => {
       render({ status: HTTP_OK, body: { photo: data.Item } });
     })
-    .catch(error => {
+    .catch(() => {
       // TODO: handle the case where item is not found
       // render({ status: HTTP_NOT_FOUND });
       render({ status: HTTP_UNPROCESSABLE_ENTITY, body: { error: 'Validation error' } });
@@ -59,10 +59,10 @@ exports.update = action.lambdaHandler((request, render) => {
 // DELETE /photos/:id
 exports.destroy = action.lambdaHandler((request, render) => {
   Photo.destroy(request.params.id)
-    .then(data => {
+    .then(() => {
       render({ status: HTTP_NO_CONTENT });
     })
-    .catch(error => {
+    .catch(() => {
       render({ status: HTTP_NOT_FOUND });
     });
 });
