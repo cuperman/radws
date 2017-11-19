@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const photos = require('./src/app/handlers/photo_handlers');
+const photos = require('./app/handlers/photo_handlers');
 
 const app = express();
 app.use(bodyParser.json());
