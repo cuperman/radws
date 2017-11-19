@@ -23,6 +23,8 @@
     "nodemon": "^1.12.1"
   },
   "dependencies": {
+    "aws-sdk": "^2.153.0",
+    "dotenv": "^4.0.0",
     "express": "^4.16.2"
   }
 }
