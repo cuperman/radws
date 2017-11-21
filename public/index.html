@@ -31,7 +31,15 @@
               <select name="path" class="form-control">
                 <option value="/api/photos">/api/photos</option>
                 <option value="/api/photos/:id">/api/photos/:id</option>
+                <option value="/api/articles">/api/articles</option>
+                <option value="/api/articles/:id">/api/articles/:id</option>
+                <option value="/api/articles/:article_id/comments">/api/articles/:article_id/comments</option>
+                <option value="/api/articles/:article_id/comments/:id">/api/articles/:article_id/comments/:id</option>
               </select>
+            </div>
+            <div class="form-group">
+              <label for="id">Article ID</label>
+              <input name="article-id" type="text" / class="form-control">
             </div>
             <div class="form-group">
               <label for="id">ID</label>

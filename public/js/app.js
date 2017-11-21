@@ -28,6 +28,7 @@ $(document).ready(function() {
   var $form = $('form');
   var $method = $form.find('[name="method"]');
   var $path = $form.find('[name="path"]');
+  var $articleId = $form.find('[name="article-id"]');
   var $id = $form.find('[name="id"]');
   var $body = $form.find('[name="body"]');
   var $summary = $('#summary');
@@ -42,7 +43,10 @@ $(document).ready(function() {
 
   $form.on('submit', function() {
     var method = $method.val();
-    var url = $path.val().replace(/:id/, $id.val());
+    var url = $path
+      .val()
+      .replace(/:id/, $id.val())
+      .replace(/:article_id/, $articleId.val());
     var data = JSON.parse(JSON.stringify($body.val()));
 
     $.ajax({
