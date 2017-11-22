@@ -1,7 +1,7 @@
 const console = require('console');
-const jsonResponse = require('../format/json_response');
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_NOT_FOUND } = require('../http/status_codes');
-const { ItemNotFound } = require('../db/errors');
+const jsonResponse = require('./json_response');
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_NOT_FOUND } = require('./status_codes');
+const { ItemNotFound } = require('../document/errors');
 
 const formatRequest = (event) => {
   let request = {};
@@ -12,7 +12,7 @@ const formatRequest = (event) => {
   return request;
 };
 
-exports.lambdaHandler = (actionCallback) => {
+module.exports = (actionCallback) => {
   return (event, context, lambdaCallback) => {
     const request = formatRequest(event);
 

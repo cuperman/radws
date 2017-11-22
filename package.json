@@ -1,30 +1,26 @@
 {
-  "name": "crud-aws",
+  "name": "jeffws-service",
   "version": "1.0.0",
-  "description": "## Rails Reference",
+  "description": "Quickly build AWS REST services",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuperman/crud-aws.git"
+    "url": "git+https://github.com/cuperman/jeffws-service.git"
   },
   "author": "Jeff Cooper",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cuperman/crud-aws/issues"
+    "url": "https://github.com/cuperman/jeffws-service/issues"
   },
-  "homepage": "https://github.com/cuperman/crud-aws#readme",
+  "homepage": "https://github.com/cuperman/jeffws-service#readme",
   "devDependencies": {
-    "eslint": "^4.11.0",
-    "nodemon": "^1.12.1"
+    "eslint": "^4.11.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.153.0",
-    "dotenv": "^4.0.0",
-    "express": "^4.16.2"
+    "aws-sdk": "^2.153.0"
   }
 }

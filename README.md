@@ -1,66 +1,52 @@
-# AWS CRUD
+# jeffws-service
 
-## Rails Reference
+Quickly build AWS REST services
 
-### Routes
+## Document
 
-HTML format:
+```javascript
+const Document = require('jeffws-service/document');
 
-```
-GET     /photos           photos#index
-GET     /photos/new       photos#new
-POST    /photos           photos#create
-GET     /photos/:id       photos#show
-GET     /photos/:id/edit  photos#edit
-PUT     /photos/:id       photos#update
-PATCH   /photos/:id       photos#update
-DELETE  /photos/:id       photos#destroy
-```
+const Article = Document({
+  region: 'us-east-1',
+  accessKeyId: 'YOUR_ACCESS_KEY_ID',
+  secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
+  tableName: 'Articles',
+  partitionKey: 'ID',
+  partitionKeyGenerator: uuid,
+  timestamps: true
+});
 
-JSON format:
-
-```
-GET     /photos           photos#index
-POST    /photos           photos#create
-GET     /photos/:id       photos#show
-PUT     /photos/:id       photos#update
-PATCH   /photos/:id       photos#update
-DELETE  /photos/:id       photos#destroy
+Article.create({
+  title: 'My first article',
+  text: 'This is a pretty cool library'
+})
+.then(article => alert(`Successfully created article ${article.ID}`));
 ```
 
-### HTTP Response Codes
+### .all(filters)
 
-```
-photos#index    200 OK
-                304 Not Modified
-photos#create   201 Created
-                422 Unprocessable Entity (CSRF or invalid)
-photos#show     200 OK
-                304 Not Modified
-                404 Not Found
-photos#update   200 OK
-                404 Not Found
-                422 Unprocessable Entity (CSRF or invalid)
-photos#destroy  204 No Content
-                404 Not Found
-                422 Unprocessable Entity (CSRF)
-```
+### .find(identifier)
 
-### Request Data
+### .create(attributes)
 
-```
-photos#create   { photo: { ...attributes } }
-photos#update   { photo: { ...attributes } }
-photos#destroy  empty
-```
+### .update(identifier, attributes)
 
-### Response Data
+### .destroy(identifier)
 
-```
-photos#index    [{ id, ...attributes, created_at, updated_at, url }, ...]
-photos#create   { id, ...attributes, created_at, updated_at, url }
-photos#show     { id, ...attributes, created_at, updated_at, url }
-photos#update   { id, ...attributes, created_at, updated_at, url }
-photos#destroy  empty
+## Resource
+
+```javascript
+const Resource = require('jeffws-service/resource');
+const Article = require('./article');
+
+// GET /articles/:id
+exports.show = Resource.handler((request, render) => {
+  return Article.find(request.params.id)
+    .then(article => {
+      render({ status: 200, body: { article }});
+    });
+});
 ```
 
+### .handler(callback)
