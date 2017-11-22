@@ -6,6 +6,7 @@ Quickly build AWS REST services
 
 ```javascript
 const Document = require('jeffws-service/document');
+const uuid = require('uuid/v4');
 
 const Article = Document({
   region: 'us-east-1',
