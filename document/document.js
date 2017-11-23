@@ -196,11 +196,10 @@ function updateItem(options, key, attributes = {}) {
       AttributeUpdates: updates,
       ReturnValues: 'ALL_NEW'
     }, (err, data) => {
-      const item = data.Attributes;
       if (err) {
         reject(err);
       } else {
-        resolve(item);
+        resolve(data.Attributes);
       }
     });
   });
