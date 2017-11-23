@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const { ItemNotFound } = require('./errors');
+const mapValues = require('lodash/mapValues');
 
 function awsConfig(options) {
   const {
@@ -178,13 +179,24 @@ function updateItem(options, key, attributes = {}) {
   const config = awsConfig(options);
   const { tableName } = options;
   const normalKey = normalizeKey(options, key);
-  const item = jsonify(updateAttributes(options, Object.assign({}, attributes, normalKey)));
+  const attributesWithTimestamps = jsonify(updateAttributes(options, attributes));
+  const item = Object.assign({}, attributesWithTimestamps, { ID: normalKey });
+
+  const updates = mapValues(attributesWithTimestamps, value => {
+    return {
+      Action: 'PUT',
+      Value: value
+    };
+  });
 
   return new Promise((resolve, reject) => {
-    documentClient(config).put({
+    documentClient(config).update({
       TableName: tableName,
-      Item: item
-    }, (err) => {
+      Key: normalKey,
+      AttributeUpdates: updates,
+      ReturnValues: 'ALL_NEW'
+    }, (err, data) => {
+      const item = data.Attributes;
       if (err) {
         reject(err);
       } else {

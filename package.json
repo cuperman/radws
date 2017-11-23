@@ -21,6 +21,7 @@
     "eslint": "^4.11.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.153.0"
+    "aws-sdk": "^2.153.0",
+    "lodash": "^4.17.4"
   }
 }
