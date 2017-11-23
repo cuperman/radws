@@ -26,7 +26,7 @@ function jsonify(attributes) {
 function createTimestamps() {
   return {
     CreatedAt: new Date(),
-    UpdateAt: new Date()
+    UpdatedAt: new Date()
   };
 }
 
