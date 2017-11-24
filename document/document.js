@@ -24,6 +24,17 @@ function jsonify(attributes) {
   return JSON.parse(JSON.stringify(attributes));
 }
 
+// note: only supports shallow objects at the moment
+function dynamoify(attributes) {
+  return mapValues(jsonify(attributes), value => {
+    if (value === '') {
+      return null;
+    } else {
+      return value;
+    }
+  });
+}
+
 function createTimestamps() {
   return {
     CreatedAt: new Date(),
@@ -87,34 +98,17 @@ function normalizeKey(options, key) {
   }
 }
 
-function scanFilters(filters = {}) {
-  let FilterExpressions = [];
-  let ExpressionAttributeValues = {};
-
-  Object.keys(filters)
-    .forEach(key => {
-      FilterExpressions.push(`${key} = :${key}`);
-      ExpressionAttributeValues[`:${key}`] = filters[key];
-    });
-
-  const FilterExpression = FilterExpressions.join(' AND ');
-
-  return {
-    FilterExpression,
-    ExpressionAttributeValues
-  };
-}
-
 function createItem(options, attributes = {}) {
   const config = awsConfig(options);
   const { tableName } = options;
-  const item = jsonify(newAttributes(options, attributes));
+  const item = dynamoify(newAttributes(options, attributes));
 
   return new Promise((resolve, reject) => {
     documentClient(config).put({
       TableName: tableName,
-      Item: item
-    }, (err) => {
+      Item: item,
+      ReturnValues: 'NONE'
+    }, (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -148,24 +142,18 @@ function findItem(options, key) {
 function allItems(options, filters) {
   const config = awsConfig(options);
   const { tableName } = options;
-
-  let params;
-  if (!filters) {
-    params = { TableName: tableName };
-  } else {
-    const {
-      FilterExpression,
-      ExpressionAttributeValues
-    } = scanFilters(filters);
-    params = {
-      TableName: tableName,
-      FilterExpression,
-      ExpressionAttributeValues
+  const scanFilter = mapValues(filters, value => {
+    return {
+      ComparisonOperator: 'EQ',
+      AttributeValueList: [ value ]
     };
-  }
+  });
 
   return new Promise((resolve, reject) => {
-    documentClient(config).scan(params, (err, data) => {
+    documentClient(config).scan({
+      TableName: tableName,
+      ScanFilter: scanFilter
+    }, (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -179,8 +167,7 @@ function updateItem(options, key, attributes = {}) {
   const config = awsConfig(options);
   const { tableName } = options;
   const normalKey = normalizeKey(options, key);
-  const attributesWithTimestamps = jsonify(updateAttributes(options, attributes));
-  const item = Object.assign({}, attributesWithTimestamps, { ID: normalKey });
+  const attributesWithTimestamps = dynamoify(updateAttributes(options, attributes));
 
   const updates = mapValues(attributesWithTimestamps, value => {
     return {
@@ -213,7 +200,8 @@ function destroyItem(options, key) {
   return new Promise((resolve, reject) => {
     documentClient(config).delete({
       TableName: tableName,
-      Key: normalKey
+      Key: normalKey,
+      ReturnValues: 'NONE'
     }, (err) => {
       if (err) {
         reject(err);

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/cuperman/jeffws-service#readme",
   "devDependencies": {
-    "eslint": "^4.11.0"
+    "chai": "^4.1.2",
+    "dotenv": "^4.0.0",
+    "eslint": "^4.11.0",
+    "mocha": "^4.0.1"
   },
   "dependencies": {
     "aws-sdk": "^2.153.0",
