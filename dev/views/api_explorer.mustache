@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Explorer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
+    <style>
+      #editor {
+        height: 200px;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+    <script>
+      function renderSummary(request, status, body) {
+        function responseBody(body) {
+          if (body) {
+            return (
+              '<h4>Response Body</h4>' +
+              '<pre>' + JSON.stringify(body, null, 2) + '</pre>'
+            );
+          } else {
+            return '';
+          }
+        }
+
+        return (
+          '<h4>Request: ' + request + '</h4>' +
+          '<h4>Status: ' + status + '</h4>' +
+          responseBody(body)
+        );
+      }
+
+      function renderError(request, error) {
+        return (
+          '<h4>Request: ' + request + '</h4>' +
+          '<h4>Error: ' + error + '</h4>'
+        );
+      }
+
+      $(document).ready(function() {
+        var $form = $('form');
+        var $method = $form.find('[name="method"]');
+        var $path = $form.find('[name="path"]');
+        var $ids = $form.find('.fieldset-ids');
+        var $body = $form.find('[name="body"]');
+        var $summary = $('#summary');
+
+        var editor = ace.edit('editor');
+        editor.setTheme('ace/theme/textmate');
+        editor.setShowPrintMargin(false);
+        editor.getSession().setMode('ace/mode/json');
+        editor.getSession().on('change', function() {
+          $body.val(editor.getValue());
+        });
+
+        $form.on('submit', function(ev) {
+          var method = $method.val();
+
+          var url = $path.val();
+          $ids.find('input').each((index, el) => {
+            var $el = $(el);
+            var name = $el.attr('name');
+            var value = $el.val();
+            url = url.replace(name, value);
+          });
+
+          var data = JSON.parse(JSON.stringify($body.val()));
+
+          $.ajax({
+            method: method,
+            url: url,
+            data: data,
+            dataType: 'json',
+            contentType: 'application/json'
+          })
+            .done(function(data, textStatus) {
+              $summary.html(renderSummary(url, textStatus, data));
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+              $summary.html(renderError(url, errorThrown));
+            });
+
+          return false;
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="page-header">
+        <h1>API Explorer</h1>
+      </header>
+      <div class="row">
+        <div class="col-sm-6">
+          <form class="clearfix">
+            <div class="form-group">
+              <label for="method">Method</label>
+              <select name="method" class="form-control">
+                {{#methods}}
+                <option value="{{value}}">{{label}}</option>
+                {{/methods}}
+              <select>
+            </div>
+            <div class="form-group">
+              <label for="path">Path</label>
+              <select name="path" class="form-control">
+                {{#paths}}
+                <option value="{{value}}">{{label}}</option>
+                {{/paths}}
+              </select>
+            </div>
+            <fieldset class="fieldset-ids">
+              <legend>Identifiers</legend>
+              {{#ids}}
+              <div class="form-group">
+                <label for="{{name}}">{{label}}</label>
+                <input name="{{name}}" type="text" / class="form-control">
+              </div>
+              {{/ids}}
+            </fieldset>
+            <div class="form-group">
+              <label for="body">Body</label>
+              <input name="body" type="hidden" />
+              <div id="editor"></div>
+            </div>
+            <div class="form-group pull-right">
+              <input type="submit" value="Send" class="btn btn-primary" />
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-6">
+          <div id="summary"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

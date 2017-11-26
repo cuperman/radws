@@ -7,6 +7,7 @@
     "jeffws-dev-server": "./bin/jeffws-dev-server"
   },
   "scripts": {
+    "dev:server": "jeffws-dev-server",
     "test": "npm run test:lint && npm run test:unit && npm run test:int",
     "test:lint": "eslint .",
     "test:unit": "mocha test/unit",
@@ -39,6 +40,7 @@
   "dependencies": {
     "aws-sdk": "^2.153.0",
     "express": "^4.16.2",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "mustache-express": "^1.2.5"
   }
 }
