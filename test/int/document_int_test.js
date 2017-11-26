@@ -1,15 +1,11 @@
 const { expect } = require('chai');
-const dotenv = require('dotenv');
-const Document = require('../document');
-
-dotenv.config();
+const Document = require('../../document');
+const config = require('../config/database');
 
 describe('Document Integration', () => {
   const doc = Document({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    tableName: 'Test.Documents',
+    region: config.StackRegion,
+    tableName: config.DocumentTableName,
     partitionKey: 'ID'
   });
 

@@ -3,9 +3,22 @@
   "version": "1.0.0-alpha.2",
   "description": "Quickly build AWS REST services",
   "main": "index.js",
+  "bin": {
+    "jeffws-dev-server": "./bin/jeffws-dev-server"
+  },
   "scripts": {
-    "lint": "eslint .",
-    "test": "mocha"
+    "test": "npm run test:lint && npm run test:unit && npm run test:int",
+    "test:lint": "eslint .",
+    "test:unit": "mocha test/unit",
+    "test:int": "mocha test/int",
+    "test:watch": "mocha --watch test/unit",
+    "deploy:test": "npm run deploy:clean:test && npm run deploy:package:test && npm run deploy:create:test && npm run --silent deploy:describe:test | tee ./package/stacks.test.json",
+    "deploy:clean:test": "rm -rf ./package",
+    "deploy:package:test": "mkdir -p package && aws cloudformation package --template-file ./template.yaml --s3-bucket jeffws-packages --output-template-file ./package/template.yaml",
+    "deploy:create:test": "aws cloudformation deploy --template-file ./template.yaml --stack-name jeffws-service-test --capabilities CAPABILITY_IAM",
+    "deploy:describe:test": "aws cloudformation describe-stacks --stack-name jeffws-service-test",
+    "deploy:log:test": "aws cloudformation describe-stack-events --stack-name jeffws-service-test | less",
+    "deploy:destroy:test": "aws cloudformation delete-stack --stack-name jeffws-service-test"
   },
   "repository": {
     "type": "git",
@@ -25,6 +38,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.153.0",
+    "express": "^4.16.2",
     "lodash": "^4.17.4"
   }
 }

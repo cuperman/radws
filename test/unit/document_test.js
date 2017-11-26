@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const Document = require('../document');
+const Document = require('../../document');
 
 describe('Document', () => {
   const doc = Document();

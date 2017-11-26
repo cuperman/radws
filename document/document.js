@@ -108,7 +108,7 @@ function createItem(options, attributes = {}) {
       TableName: tableName,
       Item: item,
       ReturnValues: 'NONE'
-    }, (err, data) => {
+    }, (err) => {
       if (err) {
         reject(err);
       } else {
