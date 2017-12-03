@@ -1,6 +1,7 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 const filter = require('lodash/filter');
+const each = require('lodash/each');
 
 function parseTemplate(filePath) {
   try {
@@ -20,11 +21,17 @@ function parseFunctions(filePath) {
 
 function parseRoutes(filePath) {
   const functions = parseFunctions(filePath);
-  return functions.map(fn => {
+
+  let routes = [];
+  functions.forEach(fn => {
     const properties = fn.Properties;
-    const resourceProperties = properties.Events.Resource.Properties;
-    return { method: resourceProperties.Method, path: resourceProperties.Path, handler: properties.Handler };
+    const events = properties.Events;
+    each(events, event => {
+      const eventProperties = event.Properties;
+      routes.push({ method: eventProperties.Method, path: eventProperties.Path, handler: properties.Handler });
+    });
   });
+  return routes;
 }
 
 module.exports = parseRoutes;
