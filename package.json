@@ -4,7 +4,8 @@
   "description": "Quickly build AWS REST services",
   "main": "index.js",
   "bin": {
-    "jeffws-dev-server": "./bin/jeffws-dev-server"
+    "jeffws-dev-server": "./bin/jeffws-dev-server",
+    "jeffws-service": "./bin/jeffws-service"
   },
   "scripts": {
     "dev:server": "jeffws-dev-server",
@@ -40,6 +41,7 @@
   "dependencies": {
     "aws-sdk": "^2.153.0",
     "express": "^4.16.2",
+    "inquirer": "^4.0.1",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "mustache-express": "^1.2.5"
