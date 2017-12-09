@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 const { ItemNotFound } = require('./errors');
-const mapValues = require('lodash/mapValues');
+const { reduce, mapValues } = require('lodash');
+
+const ConditionalCheckFailedException = 'ConditionalCheckFailedException';
 
 function awsConfig(options) {
   const {
@@ -163,28 +165,58 @@ function allItems(options, filters) {
   });
 }
 
+function expressionNameKey(name) {
+  return (`#${name}`);
+}
+
+function expressionValueKey(value) {
+  return (`:${value}`);
+}
+
+function updateExpression(attributes) {
+  const expression = reduce(attributes, (expression, value, name) => {
+    expression.push(`${expressionNameKey(name)} = ${expressionValueKey(name)}`);
+    return expression;
+  }, []);
+  return `SET ${expression.join(', ')}`;
+}
+
+function expressionAttributeNames(attributes) {
+  return reduce(attributes, (attributeNames, value, name) => {
+    attributeNames[expressionNameKey(name)] = name;
+    return attributeNames;
+  }, {});
+}
+
+function expressionAttributeValues(attributes) {
+  return reduce(attributes, (attributeValues, value, name) => {
+    attributeValues[expressionValueKey(name)] = value;
+    return attributeValues;
+  }, {});
+}
+
 function updateItem(options, key, attributes = {}) {
   const config = awsConfig(options);
   const { tableName } = options;
   const normalKey = normalizeKey(options, key);
   const attributesWithTimestamps = dynamoify(updateAttributes(options, attributes));
 
-  const updates = mapValues(attributesWithTimestamps, value => {
-    return {
-      Action: 'PUT',
-      Value: value
-    };
-  });
-
   return new Promise((resolve, reject) => {
     documentClient(config).update({
       TableName: tableName,
       Key: normalKey,
-      AttributeUpdates: updates,
+      ConditionExpression: 'attribute_exists(ID)',
+      UpdateExpression: updateExpression(attributesWithTimestamps),
+      ExpressionAttributeNames: expressionAttributeNames(attributesWithTimestamps),
+      ExpressionAttributeValues: expressionAttributeValues(attributesWithTimestamps),
       ReturnValues: 'ALL_NEW'
     }, (err, data) => {
       if (err) {
-        reject(err);
+        if (err.code === ConditionalCheckFailedException) {
+          reject(new ItemNotFound());
+        } else {
+          reject(err);
+        }
       } else {
         resolve(data.Attributes);
       }
@@ -201,10 +233,15 @@ function destroyItem(options, key) {
     documentClient(config).delete({
       TableName: tableName,
       Key: normalKey,
+      ConditionExpression: 'attribute_exists(ID)',
       ReturnValues: 'NONE'
     }, (err) => {
       if (err) {
-        reject(err);
+        if (err.code === ConditionalCheckFailedException) {
+          reject(new ItemNotFound());
+        } else {
+          reject(err);
+        }
       } else {
         resolve();
       }
