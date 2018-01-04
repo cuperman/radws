@@ -42,7 +42,7 @@ if (API_EXPLORER) {
 
 const { join } = require('path');
 const expressifyPath = require('./expressifyPath');
-const mockLambdaProxy = require('./mockLambdaProxy');
+const { mockLambdaProxy } = require('./mockLambda');
 
 let requires = {};
 routes.forEach(route => {
