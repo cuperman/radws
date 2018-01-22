@@ -1,6 +1,6 @@
 {
   "name": "radws",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "Rapid application development without servers",
   "main": "index.js",
   "scripts": {
