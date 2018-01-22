@@ -53,8 +53,6 @@ routes.forEach(route => {
   const path = expressifyPath(route.path);
   const env = route.env || {};
 
-  console.log('env', env);
-
   each(env, (val, key) => {
     process.env[key] = val;
   });
