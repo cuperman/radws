@@ -2,6 +2,28 @@
 
 Quickly build AWS REST services
 
+## Getting Started
+
+To use jeffws-service, install the node module:
+
+```bash
+npm install --save jeffws-service@next
+```
+
+Create a jeffws service using the generators in [jeffws-generator](https://github.com/cuperman/jeffws-generator)
+
+## Dev Server
+
+You can use the dev server to test your routes and handlers locally before deploying to AWS.
+
+```bash
+npm run jeffws-dev-server
+```
+
+Then, connect to [http://localhost:3000](http://localhost:3000)
+
+And try the API explorer at [http://localhost:3000/api_explorer](http://localhost:3000/api_explorer)
+
 ## Document
 
 ```javascript
