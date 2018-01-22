@@ -2,21 +2,18 @@
 
 const STATIC_DIR = 'public';
 const ROOT_DIR = process.cwd();
-const TEMPLATE_FILE = 'package/template.yaml';
+const TEMPLATE_FILE = 'template.json';
+const STACKS_FILE = 'package/stacks.json';
 const API_EXPLORER = true;
 const PORT = 3000;
-
-// Load environment variables
-
-const dotenv = require('dotenv');
-dotenv.config();
 
 // Initialize Express app
 
 const express = require('express');
 const bodyParser = require('body-parser');
-var mustache = require('mustache-express');
+const mustache = require('mustache-express');
 const path = require('path');
+const { each } = require('lodash');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,7 +26,12 @@ app.listen(PORT);
 // Parse routes
 
 const parseRoutes = require('./parseRoutes');
-const routes = parseRoutes(TEMPLATE_FILE);
+const routes = parseRoutes(TEMPLATE_FILE, STACKS_FILE);
+
+console.log('ROUTES:');
+routes.forEach(route => {
+  console.log(`  ${route.method} ${route.path} => ${route.handler}`);
+});
 
 // API Explorer
 
@@ -49,6 +51,13 @@ routes.forEach(route => {
   const [handlerFile, handlerFn] = route.handler.split('.');
   const method = route.method.toLowerCase();
   const path = expressifyPath(route.path);
+  const env = route.env || {};
+
+  console.log('env', env);
+
+  each(env, (val, key) => {
+    process.env[key] = val;
+  });
 
   if (!requires[handlerFile]) {
     requires[handlerFile] = require(join(ROOT_DIR, handlerFile));
