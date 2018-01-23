@@ -1,14 +1,13 @@
 {
-  "name": "jeffws-service",
+  "name": "radws",
   "version": "1.0.0-alpha.6",
-  "description": "Quickly build AWS REST services",
+  "description": "Rapid application development without servers",
   "main": "index.js",
   "bin": {
-    "jeffws-dev-server": "./bin/jeffws-dev-server",
-    "jeffws-service": "./bin/jeffws-service"
+    "radws-dev-server": "./bin/radws-dev-server"
   },
   "scripts": {
-    "dev:server": "jeffws-dev-server",
+    "dev:server": "radws-dev-server",
     "test": "npm run test:lint && npm run test:unit && npm run test:int",
     "test:lint": "eslint .",
     "test:unit": "mocha test/unit",
@@ -16,22 +15,22 @@
     "test:watch": "mocha --watch test/unit",
     "deploy:test": "npm run deploy:clean:test && npm run deploy:package:test && npm run deploy:create:test && npm run --silent deploy:describe:test | tee ./package/stacks.test.json",
     "deploy:clean:test": "rm -rf ./package",
-    "deploy:package:test": "mkdir -p package && aws cloudformation package --template-file ./template.yaml --s3-bucket jeffws-packages --output-template-file ./package/template.yaml",
-    "deploy:create:test": "aws cloudformation deploy --template-file ./template.yaml --stack-name jeffws-service-test --capabilities CAPABILITY_IAM",
-    "deploy:describe:test": "aws cloudformation describe-stacks --stack-name jeffws-service-test",
-    "deploy:log:test": "aws cloudformation describe-stack-events --stack-name jeffws-service-test | less",
-    "deploy:destroy:test": "aws cloudformation delete-stack --stack-name jeffws-service-test"
+    "deploy:package:test": "mkdir -p package && aws cloudformation package --template-file ./template.yaml --s3-bucket radws-packages --output-template-file ./package/template.yaml",
+    "deploy:create:test": "aws cloudformation deploy --template-file ./template.yaml --stack-name radws-test --capabilities CAPABILITY_IAM",
+    "deploy:describe:test": "aws cloudformation describe-stacks --stack-name radws-test",
+    "deploy:log:test": "aws cloudformation describe-stack-events --stack-name radws-test | less",
+    "deploy:destroy:test": "aws cloudformation delete-stack --stack-name radws-test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuperman/jeffws-service.git"
+    "url": "git+https://github.com/cuperman/radws.git"
   },
   "author": "Jeff Cooper",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cuperman/jeffws-service/issues"
+    "url": "https://github.com/cuperman/radws/issues"
   },
-  "homepage": "https://github.com/cuperman/jeffws-service#readme",
+  "homepage": "https://github.com/cuperman/radws#readme",
   "devDependencies": {
     "chai": "^4.1.2",
     "dotenv": "^4.0.0",

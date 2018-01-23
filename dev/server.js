@@ -1,3 +1,5 @@
+const console = require('console');
+
 // Options
 
 const STATIC_DIR = 'public';

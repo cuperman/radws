@@ -1,23 +1,23 @@
-# jeffws-service
+# Radws
 
-Quickly build AWS REST services
+> Rapid application development without servers
 
 ## Getting Started
 
-To use jeffws-service, install the node module:
+To use radws, install the node module:
 
 ```bash
-npm install --save jeffws-service@next
+npm install --save radws@latest
 ```
 
-Create a jeffws service using the generators in [jeffws-generator](https://github.com/cuperman/jeffws-generator)
+Create a radws app using the generators in [generator-radws](https://github.com/cuperman/generator-radws)
 
 ## Dev Server
 
 You can use the dev server to test your routes and handlers locally before deploying to AWS.
 
 ```bash
-npm run jeffws-dev-server
+npm run radws-dev-server
 ```
 
 Then, connect to [http://localhost:3000](http://localhost:3000)
@@ -27,7 +27,7 @@ And try the API explorer at [http://localhost:3000/api_explorer](http://localhos
 ## Document
 
 ```javascript
-const Document = require('jeffws-service/document');
+const Document = require('radws/document');
 const uuid = require('uuid/v4');
 
 const Article = Document({
@@ -60,7 +60,7 @@ Article.create({
 ## Resource
 
 ```javascript
-const Resource = require('jeffws-service/resource');
+const Resource = require('radws/resource');
 const Article = require('./article');
 
 // GET /articles/:id

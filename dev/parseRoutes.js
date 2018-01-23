@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { assign, reduce, each, find, upperFirst, camelCase } = require('lodash');
+const { reduce, upperFirst, camelCase } = require('lodash');
 
 function parseJsonFile(filePath) {
   try {
