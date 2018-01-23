@@ -28,10 +28,20 @@ app.listen(PORT);
 const parseRoutes = require('./parseRoutes');
 const routes = parseRoutes(TEMPLATE_FILE, STACKS_FILE);
 
+console.log('HANDLERS:');
+each(routes, route => {
+  console.log(`  ${route.handler}`);
+  each(route.env, (val, key) => {
+    console.log(`    ${key}: ${val}`);
+  });
+});
+console.log('');
+
 console.log('ROUTES:');
-routes.forEach(route => {
+each(routes, route => {
   console.log(`  ${route.method} ${route.path} => ${route.handler}`);
 });
+console.log('');
 
 // API Explorer
 
