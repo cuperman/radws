@@ -30,13 +30,6 @@
         );
       }
 
-      function renderError(request, error) {
-        return (
-          '<h4>Request: ' + request + '</h4>' +
-          '<h4>Error: ' + error + '</h4>'
-        );
-      }
-
       $(document).ready(function() {
         var $form = $('form');
         var $method = $form.find('[name="method"]');
@@ -81,7 +74,11 @@
               $summary.html(renderSummary(url, textStatus, data));
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
-              $summary.html(renderError(url, errorThrown));
+              var data;
+              if (jqXHR.responseText) {
+                data = JSON.parse(jqXHR.responseText);
+              }
+              $summary.html(renderSummary(url, errorThrown, data));
             });
 
           return false;
