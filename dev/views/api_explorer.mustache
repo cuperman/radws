@@ -61,7 +61,7 @@
             var $el = $(el);
             var name = $el.attr('name');
             var value = $el.val();
-            url = url.replace(name, value);
+            url = url.replace(name, encodeURIComponent(value));
           });
 
           var data = JSON.parse(JSON.stringify($body.val()));
