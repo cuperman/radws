@@ -70,10 +70,14 @@
             method: method,
             url: url,
             data: data,
-            dataType: 'json',
+            dataType: 'text',
             contentType: 'application/json'
           })
-            .done(function(data, textStatus) {
+            .done(function(text, textStatus) {
+              var data;
+              if (text) {
+                data = JSON.parse(text);
+              }
               $summary.html(renderSummary(url, textStatus, data));
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
